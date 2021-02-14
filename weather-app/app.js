@@ -1,13 +1,17 @@
-console.log('Starting..');
+const geoaddress = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
-// one of the basic async programs in javascript by default
-
-setTimeout(() => {
-    console.log('runs..');
-},2000);
-
-setTimeout(() => {
-    console.log('second time out runs..');
-},0);
-
-console.log('Stopping.');
+geoaddress(process.argv[2],(error, {latitude, longitude, location}) => {
+    if(!process.argv[2]) {
+        return console.log('Provide a valid location');
+    }
+    if(error) {
+        return console.log('Error: ' + error);
+    }
+    forecast(latitude,longitude,(error, data1) => {
+        if(error) {
+            return console.log('Error forecast: ' + error);
+        }
+        console.log('Location: '+ location +' Data forecast: '+ JSON.stringify(data1));
+    })
+})
