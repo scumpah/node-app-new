@@ -32,7 +32,7 @@ console.log(pincode);
 
 // sample example of practical use
 
-const userInfo = (tenantType, {apartment, lane}) =>{
+const userInfo = (tenantType, {apartment, lane} = {}) =>{
     console.log(tenantType+ ' ' + apartment + ' ' + lane);
 }
 

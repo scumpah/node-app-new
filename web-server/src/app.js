@@ -2,6 +2,9 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const hbs = require('hbs');
+const forecast = require('./utils/forecast');
+const geocode = require('./utils/geocode');
+const geoaddress = require('./utils/geocode');
 
 // Define paths for express config
 const publicDirectoryPath = path.join(__dirname,'../public');
@@ -41,9 +44,42 @@ app.get('/help', (req,res) => {
 })
 
 app.get('/weather', (req,res) => {
+    if(!req.query.address) {
+        return res.send({
+            error: "Address is not present in query"
+        })
+    }
+    const address = req.query.address;
+    geoaddress(address,(error, {latitude, longitude, location} = {}) => {
+        if (error) {
+            return res.send({
+                error
+            })
+        }
+        forecast(latitude,longitude, (error, data = {}) => {
+            if(error) {
+                return res.send({
+                    error
+                })
+            }
+            res.send({
+                forecast: "It is "+data.description+". The temperature is "+data.temperature+". But it feels like "+ data.feelslike,
+                location,
+                address
+            })
+        })
+    })
+})
+
+app.get('/products', (req,res) => {
+    if(!req.query.search) {
+       return res.send({
+            "error": "search is not present"
+        })
+    }
+    console.log(req.query.search);
     res.send({
-        forecast: "Forecast",
-        location: "1010,1011"
+        products: []
     });
 })
 
